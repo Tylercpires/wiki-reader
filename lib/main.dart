@@ -17,13 +17,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final viewModel = ArticleViewModel(ArticleModel());
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('WikiReader'),
+          title: const Text("WikiReader"),
         ),
         body: const Center(
-          child: Text('Loading...'),
+          child: Text("Check Debug Console for article summary."),
         ),
       ),
     );
@@ -35,14 +38,14 @@ class ArticleModel {
 
   Future<Summary> getRandomArticleSummary() async{
     final uri = Uri.https(
-      'en.wikipedia.org',
-      '/api/rest_v1/page/random/summary',
+      "en.wikipedia.org",
+      "/api/rest_v1/page/random/summary",
     );
 
     final response = await get(uri);
 
     if(response.statusCode != 200){
-      throw HttpException('Failed to load article summary');
+      throw HttpException("Failed to load article summary");
     }
 
     return Summary.fromJson(jsonDecode(response.body));
@@ -55,6 +58,34 @@ class ArticleView{
 }
 
 //Manages state and connects ArticleModel and ArticleView.
-class ArticleViewModel{
+class ArticleViewModel extends ChangeNotifier{
+
+  final ArticleModel model;
+  Summary? summary;
+  String? errorMessage;
+  bool loading = false;
+
+  ArticleViewModel(this.model){
+    getRandomArticleSummary();
+  }
+
+  Future<void> getRandomArticleSummary() async{
+
+    loading = true;
+    notifyListeners();
+
+    try{
+      summary = await model.getRandomArticleSummary();
+      print("Article loaded: ${summary!.titles.normalized}");
+      errorMessage = null;
+    } on HttpException catch(error){
+      print("Error loading article: ${error.message}");
+      errorMessage = error.message;
+      summary = null;
+    }
+
+    loading = false;
+    notifyListeners();
+  }
 
 }
