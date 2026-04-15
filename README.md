@@ -1,3 +1,3 @@
 # wikipedia_reader
 
-A new Flutter project.
+This repository houses a Flutter implementation of a "Wikipedia Reader." It fetches random Wikipedia articles using the Wikipedia API, displaying both the image and summary associated with said article. It is intended to demonstrate how HTTP requests can be used in Flutter, and was built by following along with Flutter's "State in Flutter Apps" tutorial. It can be accessed [here](https://docs.flutter.dev/learn/pathway/tutorial/set-up-state-project).
